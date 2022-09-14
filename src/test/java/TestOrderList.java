@@ -1,4 +1,4 @@
-import Cards.OrdersListCard;
+import cards.OrdersListCard;
 import io.qameta.allure.junit4.DisplayName;
 import io.restassured.RestAssured;
 import org.junit.Assert;

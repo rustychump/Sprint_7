@@ -1,5 +1,5 @@
-import Cards.Courier;
-import Cards.ResponseLoginCourier;
+import cards.LogInCourierCard;
+import cards.ResponseLoginCourier;
 import io.qameta.allure.junit4.DisplayName;
 import io.restassured.RestAssured;
 import org.junit.After;
@@ -22,7 +22,7 @@ public class TestLogInCourier {
                 .post("/api/v1/courier");
     }
 
-    Courier courier = new Courier("assassin", "1234");
+    LogInCourierCard courier = new LogInCourierCard("assassin", "1234");
 
     @DisplayName("Проверяем, что курьер может авторизоваться, для авторизации нужно передать все обязательные поля, успешный запрос возвращает id")
     @Test
@@ -38,7 +38,7 @@ public class TestLogInCourier {
     @DisplayName("Проверяем, что система вернёт ошибку, если неправильно указать логин")
     @Test
     public void checkLogInIncorrectLogin() {
-        courier = new Courier("templar", "1234");
+        courier = new LogInCourierCard("templar", "1234");
 
         given()
                 .header("Content-type", "application/json")
@@ -51,7 +51,7 @@ public class TestLogInCourier {
     @DisplayName("Проверяем, что система вернёт ошибку, если неправильно указать пароль")
     @Test
     public void checkLogInIncorrectPassword() {
-        courier = new Courier("assassin", "12345");
+        courier = new LogInCourierCard("assassin", "12345");
 
         given()
                 .header("Content-type", "application/json")
@@ -64,7 +64,7 @@ public class TestLogInCourier {
     @DisplayName("Проверяем, что если какого-то поля нет, запрос возвращает ошибку")
     @Test
     public void checkLogInWithoutLogin() {
-        courier = new Courier("1234");
+        courier = new LogInCourierCard("1234");
 
         given()
                 .header("Content-type", "application/json")
@@ -77,7 +77,7 @@ public class TestLogInCourier {
     @DisplayName("Проверяем, что если авторизоваться под несуществующим пользователем, запрос возвращает ошибку")
     @Test
     public void checkLogInNonExistentCourier() {
-        courier = new Courier("templar", "12345");
+        courier = new LogInCourierCard("templar", "12345");
 
         given()
                 .header("Content-type", "application/json")

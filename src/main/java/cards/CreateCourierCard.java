@@ -1,6 +1,6 @@
-package Cards;
+package cards;
 
-public class Courier {
+public class CreateCourierCard {
     private String login;
     private String password;
     private String firstName;
@@ -31,19 +31,19 @@ public class Courier {
 
 
 
-    public Courier(String login, String password, String firstName) {
+    public CreateCourierCard(String login, String password, String firstName) {
         this.login = login;
         this.password = password;
         this.firstName = firstName;
     }
-    public Courier(String login, String password) {
+    public CreateCourierCard(String login, String firstName) {
         this.login = login;
+        this.firstName = firstName;
+    }
+
+    public CreateCourierCard(String password) {
         this.password = password;
     }
 
-    public Courier(String password) {
-        this.password = password;
-    }
-
-    public Courier() {}
+    public CreateCourierCard() {}
 }

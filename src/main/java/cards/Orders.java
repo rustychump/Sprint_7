@@ -1,6 +1,4 @@
-package Cards;
-
-import java.util.List;
+package cards;
 
 public class Orders {
     public int getId() {

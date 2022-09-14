@@ -1,7 +1,8 @@
-import Cards.Courier;
-import Cards.ResponseLoginCourier;
+import cards.CreateCourierCard;
+import cards.ResponseLoginCourier;
 import io.qameta.allure.junit4.DisplayName;
 import io.restassured.RestAssured;
+import org.hamcrest.MatcherAssert;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -15,7 +16,7 @@ public class TestCreateCourier {
     public void setUp() {
         RestAssured.baseURI = "http://qa-scooter.praktikum-services.ru";
     }
-    Courier courier = new Courier("assassin", "1234", "saske");
+    CreateCourierCard courier = new CreateCourierCard("assassin", "1234", "saske");
 
     @DisplayName("Проверяем, что в курьера можно создать")
     @Test
@@ -45,23 +46,23 @@ public class TestCreateCourier {
                 .then().statusCode(409).and().body("message", equalTo("Этот логин уже используется")); //фейлится т.к. ответ не соответствует документации
     }
 
-    @DisplayName("Проверяем, чтобы создать курьера, нужно передать в ручку все обязательные поля")
+    @DisplayName("Проверяем, что запрос возвращает ошибку, если не передать пароль")
     @Test
-    public void checkCreateCourierWithOnlyRequiredFields() {
-        courier = new Courier("assassin", "1234");
+    public void checkCreateCourierWithoutPassword() {
+        courier = new CreateCourierCard("assassin", "saske");
 
         given()
                 .header("Content-type", "application/json")
                 .body(courier)
                 .when()
                 .post("/api/v1/courier")
-                .then().assertThat().statusCode(201).and().body("ok", equalTo(true));
+                .then().assertThat().statusCode(400).and().body("message", equalTo("Недостаточно данных для создания учетной записи"));
     }
 
-    @DisplayName("Проверяем, что если одного из полей нет, запрос возвращает ошибку")
+    @DisplayName("Проверяем, что запрос возвращает ошибку, если не передать логин")
     @Test
-    public void checkCreateCourierWithoutRequiredFields() {
-        courier = new Courier("1234");
+    public void checkCreateCourierWithoutLogin() {
+        courier = new CreateCourierCard("1234");
 
         given()
                 .header("Content-type", "application/json")
@@ -80,7 +81,7 @@ public class TestCreateCourier {
                 .when()
                 .post("/api/v1/courier");
 
-        Courier courierClone = new Courier("assassin", "12345", "naruto");
+        CreateCourierCard courierClone = new CreateCourierCard("assassin", "12345", "naruto");
 
         given()
                 .header("Content-type", "application/json")
@@ -93,18 +94,19 @@ public class TestCreateCourier {
     @After
     public void deleteTestData() {
 
-        //получаем id созданного курьера
-        ResponseLoginCourier responseLoginCourier = given().
-                header("Content-type", "application/json").
-                body(courier)
-                .post("/api/v1/courier/login")
-                .body()
-                .as(ResponseLoginCourier.class);
+        if (courier.getPassword() != null) {
+            //получаем id созданного курьера
+            ResponseLoginCourier responseLoginCourier = given().
+                    header("Content-type", "application/json").
+                    body(courier)
+                    .post("/api/v1/courier/login")
+                    .body()
+                    .as(ResponseLoginCourier.class);
 
-        //удаляем курьера по полученному id
-        given()
-                .header("Content-type", "application/json")
-                .delete("/api/v1/courier/" + responseLoginCourier.getId());
+            //удаляем курьера по полученному id
+            given()
+                    .header("Content-type", "application/json")
+                    .delete("/api/v1/courier/" + responseLoginCourier.getId());
+        }
     }
-
 }
